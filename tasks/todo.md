@@ -150,28 +150,28 @@ Sector macro alerts deferred to Phase 3.
 ---
 
 ## 1. Telegram Bot Setup (manual steps)
-- [ ] Message `@BotFather` → `/newbot` → copy bot token
-- [ ] Send any message to the new bot (creates the chat session)
-- [ ] Open `https://api.telegram.org/bot{TOKEN}/getUpdates` → copy `message.chat.id`
-- [ ] Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` to `.env`
-- [ ] Add same two values as GitHub Actions secrets (`Settings → Secrets → Actions`)
+- [x] Message `@BotFather` → `/newbot` → copy bot token
+- [x] Send any message to the new bot (creates the chat session)
+- [x] Open `https://api.telegram.org/bot{TOKEN}/getUpdates` → copy `message.chat.id`
+- [x] Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` to `.env`
+- [x] Add same two values as GitHub Actions secrets (`Settings → Secrets → Actions`)
 
 ## 2. alerts.py
-- [ ] `get_last_two_dates()` — anchor on Samsung (005930), returns (today, yesterday) or None
-- [ ] `get_grade_changes(today, yesterday)` — returns (upgrades, downgrades)
-- [ ] `get_radar_changes(today, yesterday)` — returns (new_entries, exits) for top-20 by score
-- [ ] `format_message(...)` — Telegram Markdown digest; omit empty sections; quiet-day fallback
-- [ ] `send_telegram(text, token, chat_id)` — POST via httpx (already in requirements)
-- [ ] `main()` — wire it up, print preview before sending
-- [ ] Verify locally: message arrives in Telegram
+- [x] `get_last_two_dates()` — anchor on Samsung (005930), returns (today, yesterday) or None
+- [x] `get_grade_changes(today, yesterday)` — returns (upgrades, downgrades)
+- [x] `get_radar_changes(today, yesterday)` — returns (new_entries, exits) for top-20 by score
+- [x] `format_message(...)` — Telegram Markdown digest; omit empty sections; quiet-day fallback
+- [x] `send_telegram(text, token, chat_id)` — POST via httpx (already in requirements)
+- [x] `main()` — wire it up, print preview before sending
+- [x] Verify locally: message arrives in Telegram
 
 ## 3. GitHub Actions
-- [ ] Add `Run alerts.py` step to `snapshot.yml` after `score.py`
-- [ ] Confirm `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` secrets are set
-- [ ] Trigger `workflow_dispatch` and confirm alert fires end-to-end
+- [x] Add `Run alerts.py` step to `snapshot.yml` after `score.py`
+- [x] Confirm `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` secrets are set
+- [x] Trigger `workflow_dispatch` and confirm alert fires end-to-end
 
 ## 4. Verification Checklist
-- [ ] Telegram message arrives within seconds of running `python pipeline/alerts.py`
-- [ ] Grade changes section is accurate (matches Changes page on dashboard)
+- [x] Telegram message arrives within seconds of running `python pipeline/alerts.py`
+- [x] Grade changes section is accurate (matches Changes page on dashboard)
 - [ ] Quiet-day run sends brief "no changes" confirmation instead of silently skipping
-- [ ] GitHub Actions run includes alerts step with green checkmark
+- [x] GitHub Actions run includes alerts step with green checkmark (55s total)
