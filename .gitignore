@@ -1,7 +1,17 @@
+# credentials
 .env
+
+# python
 __pycache__/
 *.pyc
+.venv/
+
+# next.js
 .next/
 node_modules/
+
+# deployment
 .vercel/
+
+# misc
 *.log
