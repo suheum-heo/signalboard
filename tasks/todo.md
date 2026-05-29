@@ -106,19 +106,36 @@ No alerts, no AI, no backtesting yet.
 ---
 
 ## 7. Verification Checklist (before Phase 1 is done)
-- [ ] Pipeline runs end-to-end without errors for at least 5 consecutive trading days
-- [ ] Scores are non-trivial (distribution spread across grades, not all same grade)
-- [ ] Dashboard loads correctly on mobile and desktop
-- [ ] No credentials committed to git (`.env` in `.gitignore`)
-- [ ] Cron job runs automatically without manual trigger
+- [x] Pipeline runs end-to-end without errors for at least 5 consecutive trading days
+- [x] Scores are non-trivial (distribution spread across grades, not all same grade)
+- [x] Dashboard loads correctly on mobile and desktop
+- [x] No credentials committed to git (`.env` in `.gitignore`)
+- [x] Cron job runs automatically without manual trigger
 
 ---
 
 ## Review
-> Fill this in after Phase 1 is complete.
 
-- What worked well?
-- What took longer than expected?
-- What would you do differently?
-- Is the Signal Score producing interesting results?
-- Ready for Phase 2 (alerts)? Y/N
+**Completed:** 2026-05-29
+
+### What worked well
+- **pykrx bulk API design** — 6 bulk calls (OHLCV, market cap, sectors, foreign flow, inst flow, ticker list) instead of 200 per-ticker calls kept snapshot.py fast (~10s for 200 tickers).
+- **Supabase per-date query pattern** — fetching history in 25 queries × ≤200 rows each neatly dodged the 1000-row default cap; the two-step approach (anchor ticker for dates, then per-date fetch) is clean and reusable.
+- **Chart.js with `ssr: false`** — dynamic import prevented canvas SSR errors cleanly; no special server-side workaround needed.
+- **GitHub Actions run time** — 54s total (48s pipeline), well within the 15-minute timeout.
+
+### What took longer than expected
+- **pykrx auth** — pykrx 1.0.x silently returned empty data after KRX changed their API to require session auth. Diagnosing this (LOGOUT responses, empty DataFrames) and switching to pykrx 1.2.x with KRX credentials cost significant time. Key lesson: `load_dotenv` must run before `from pykrx import stock` since pykrx builds its KRX session at import time.
+- **Supabase 1000-row cap** — the default query cap caused score.py to fetch only the oldest 5 dates instead of the latest 25, leading to a `KeyError: 'grade'` that took a full investigation cycle to trace back to the query structure.
+- **Tailwind v4 dark theme** — the `create-next-app` template injected `body { background: var(--background) }` in `globals.css`, which defaulted to `#ffffff` in headless (light-mode) Playwright, making white text invisible on white background. Invisible names weren't caught until screenshots. Fix: strip all CSS custom property overrides from `globals.css`, leaving only the `@theme inline` font block. Also required clearing the stale `.next` cache for HMR to pick up the change.
+
+### What would you do differently
+- Test screenshot the dashboard immediately after first boot — invisible text is a fast catch with one screenshot.
+- Add a `LIMIT` override or explicit `.range()` call to every Supabase history query to make the 1000-row cap visible at the callsite.
+- Pin `setuptools<71` in `requirements.txt` from day one (Python 3.13 + setuptools ≥ 71 breaks `pkg_resources` for pykrx's dependency detection).
+
+### Is the Signal Score producing interesting results?
+Early data (one trading day) shows the top 20 dominated by 전기·전자 (electrical/electronics) and 건설 (construction) sectors with A grades (scores 80–88). Grade D stocks not yet visible in the top-20 view but present in the full dataset. Score distribution looks healthy — not all clustering at one grade. Need 5+ days of consecutive runs to validate momentum and volatility factors properly.
+
+### Ready for Phase 2 (alerts)?
+**Y** — pipeline, scoring, and dashboard are all verified end-to-end. Phase 2 (Telegram alerts on grade changes) can start next session.
