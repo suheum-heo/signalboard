@@ -85,6 +85,11 @@ It snapshots KOSPI 200 stock data daily, calculates a proprietary Signal Score, 
 - Point at logs, errors, failing tests — then resolve them
 - No hand-holding required from Suheum
 
+### Git
+- After completing each verified step, commit and push with a descriptive message
+- Commit format: `feat: <what was built>` or `fix: <what was fixed>`
+- Never commit `.env` or credentials
+
 ---
 
 ## Task Management
